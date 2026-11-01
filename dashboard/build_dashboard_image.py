@@ -40,7 +40,7 @@ gs = fig.add_gridspec(4, 3, height_ratios=[0.62, 0.85, 1.55, 1.55],
 axh = fig.add_subplot(gs[0, :]); axh.axis("off")
 axh.add_patch(FancyBboxPatch((0, 0.18), 1, 0.78, boxstyle="round,pad=0.004,rounding_size=0.012",
                              transform=axh.transAxes, facecolor=NAVY, edgecolor="none"))
-axh.text(0.018, 0.70, "E-Commerce Sales & KPI Dashboard — Power BI",
+axh.text(0.018, 0.70, "E-Commerce Sales & KPI — Power BI Dashboard",
          transform=axh.transAxes, color="white", fontsize=19, fontweight="bold", va="center")
 axh.text(0.018, 0.34, "Mobile App  ·  Website  ·  Marketplace     |     Jan 2023 – Jun 2025     |     All values in INR (₹)",
          transform=axh.transAxes, color="#cfe3ec", fontsize=12.5, va="center")
@@ -88,7 +88,7 @@ plt.setp(ax.get_xticklabels(), rotation=45, ha="left", fontsize=8.5); ax.set_yla
 
 ax = fig.add_subplot(gs[3, 0]); panel(ax, "Revenue Share by Sales Channel")
 ax.pie(ch["Revenue (INR)"], labels=ch["Sales Channel"], autopct="%1.1f%%",
-       colors=[TEAL, AMBER, RED], wedgeprops=dict(width=0.45, edgecolor="white"),
+       colors=[TEAL, AMBER, NAVY], wedgeprops=dict(width=0.45, edgecolor="white"),
        textprops=dict(fontsize=10.5))
 ax.grid(False)
 

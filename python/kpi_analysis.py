@@ -129,7 +129,7 @@ fig.tight_layout(); fig.savefig(IMG / "revenue_by_category.svg", format="svg"); 
 ch = pd.read_csv(OUT / "sales_by_channel.csv")
 fig, ax = plt.subplots(figsize=(5.5, 4))
 ax.pie(ch["Revenue (INR)"], labels=ch["Sales Channel"], autopct="%1.1f%%",
-       colors=["#1f6f8b", "#ffb703", "#c0392b"], wedgeprops=dict(width=0.45, edgecolor="white"))
+       colors=["#1f6f8b", "#ffb703", "#0d2b45"], wedgeprops=dict(width=0.45, edgecolor="white"))
 ax.set_title("Revenue Share by Sales Channel")
 fig.tight_layout(); fig.savefig(IMG / "revenue_by_channel.svg", format="svg"); plt.close(fig)
 

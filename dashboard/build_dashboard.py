@@ -114,7 +114,7 @@ main {{ max-width: 1180px; margin: 0 auto; padding: 24px 20px 40px; }}
 .kpi-value {{ font-size: 27px; font-weight: 700; color: #0d2b45; margin: 6px 0 2px; }}
 .kpi-sub {{ font-size: 12px; color: #61707e; }}
 h2 {{ font-size: 18px; color: #0d2b45; margin: 28px 0 12px; }}
-.panel {{ background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(13,43,69,.10); overflow-x: auto; margin-bottom: 6px; }}
+.panel {{ background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(13,43,69,.10); overflow-x: auto; }}
 .insights {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }}
 .insight {{ background: #fff7e8; border-left: 4px solid #ffb703; border-radius: 8px; padding: 14px 16px; font-size: 14px; line-height: 1.5; }}
 .charts {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 14px; }}
@@ -126,6 +126,7 @@ th {{ text-align: left; padding: 9px 10px; background: #0d2b45; color: #fff; }}
 td {{ padding: 8px 10px; border-bottom: 1px solid #e5ebf0; }}
 tr:nth-child(even) td {{ background: #f7fafc; }}
 footer {{ text-align: center; color: #61707e; font-size: 12.5px; padding: 22px; line-height: 1.6; }}
+@media print {{ body {{ background: #fff; }} }}
 </style></head><body>
 <header>
   <h1>E-Commerce Sales &amp; KPI Dashboard</h1>
