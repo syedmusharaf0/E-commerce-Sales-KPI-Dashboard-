@@ -1,0 +1,86 @@
+// ============================================================================
+// E-Commerce Sales & KPI Dashboard — Power BI DAX measures
+// Tables: dim_products, dim_customers, fact_orders
+// Columns use the friendly display names from the CSV headers.
+// Revenue counts DELIVERED orders only (see the Delivered filter inside
+// the core measures). All monetary values in Indian Rupees (INR).
+//
+// SETUP for the growth measures: add a calendar table (Modeling > New table):
+//   Calendar = CALENDAR ( DATE ( 2023, 1, 1 ), DATE ( 2025, 6, 30 ) )
+// relate Calendar[Date] -> fact_orders[Order Date] and mark Calendar as
+// the date table. Growth measures are the DAX equivalent of the SQL LAG()
+// comparisons in sql/02_kpi_queries.sql.
+// ============================================================================
+
+// ---------- Core KPIs (delivered orders) ----------
+Total Revenue INR =
+CALCULATE ( SUM ( fact_orders[Order Value (INR)] ),
+            fact_orders[Order Status] = "Delivered" )
+
+Total Sales INR = [Total Revenue INR]   // headline Total Sales measure
+
+Total Orders = COUNTROWS ( fact_orders )
+
+Delivered Orders =
+CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[Order Status] = "Delivered" )
+
+Total Units Sold =
+CALCULATE ( SUM ( fact_orders[Quantity] ), fact_orders[Order Status] = "Delivered" )
+
+Average Order Value INR = DIVIDE ( [Total Revenue INR], [Delivered Orders] )
+
+Total Cost INR =
+CALCULATE ( SUMX ( fact_orders, fact_orders[Quantity]
+              * RELATED ( dim_products[Unit Cost (INR)] ) ),
+            fact_orders[Order Status] = "Delivered" )
+
+Gross Margin % =
+DIVIDE ( [Total Revenue INR] - [Total Cost INR], [Total Revenue INR] ) * 100
+
+Return Rate % =
+VAR Returned = CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[Order Status] = "Returned" )
+VAR Fulfilled = CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[Order Status] <> "Cancelled" )
+RETURN DIVIDE ( Returned, Fulfilled ) * 100
+
+Cancellation Rate % =
+DIVIDE ( CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[Order Status] = "Cancelled" ),
+         [Total Orders] ) * 100
+
+Active Customers =
+CALCULATE ( DISTINCTCOUNT ( fact_orders[Customer ID] ),
+            fact_orders[Order Status] = "Delivered" )
+
+Repeat Customer % =
+VAR CustOrders =
+    SUMMARIZE ( FILTER ( fact_orders, fact_orders[Order Status] = "Delivered" ),
+                fact_orders[Customer ID], "@orders", COUNTROWS ( fact_orders ) )
+VAR RepeatCust = COUNTROWS ( FILTER ( CustOrders, [@orders] >= 2 ) )
+RETURN DIVIDE ( RepeatCust, COUNTROWS ( CustOrders ) ) * 100
+
+Average Discount % =
+CALCULATE ( AVERAGE ( fact_orders[Discount %] ), fact_orders[Order Status] = "Delivered" )
+
+// ---------- Growth comparisons (LAG equivalents) ----------
+Revenue Previous Week =
+CALCULATE ( [Total Revenue INR], DATEADD ( Calendar[Date], -7, DAY ) )
+
+Revenue WoW Growth % =
+DIVIDE ( [Total Revenue INR] - [Revenue Previous Week], [Revenue Previous Week] ) * 100
+
+Revenue Previous Month =
+CALCULATE ( [Total Revenue INR], DATEADD ( Calendar[Date], -1, MONTH ) )
+
+Revenue MoM Growth % =
+DIVIDE ( [Total Revenue INR] - [Revenue Previous Month], [Revenue Previous Month] ) * 100
+
+Revenue Same Period Last Year =
+CALCULATE ( [Total Revenue INR], SAMEPERIODLASTYEAR ( Calendar[Date] ) )
+
+Revenue YoY Growth % =
+DIVIDE ( [Total Revenue INR] - [Revenue Same Period Last Year],
+         [Revenue Same Period Last Year] ) * 100
+
+Orders YoY Growth % =
+VAR Cur = [Delivered Orders]
+VAR Prev = CALCULATE ( [Delivered Orders], SAMEPERIODLASTYEAR ( Calendar[Date] ) )
+RETURN DIVIDE ( Cur - Prev, Prev ) * 100

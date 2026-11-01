@@ -1,0 +1,54 @@
+// ============================================================================
+// Power Query (M) — load the three project tables into Power BI
+// Power BI Desktop > Get Data > Blank Query > Advanced Editor, paste ONE
+// block per table, name the query exactly as shown, Close & Apply.
+// Set the DataFolder path in the first line of each block to your data folder.
+// The CSV headers are already the friendly display names used by the DAX
+// measures, so no renaming step is needed.
+// ============================================================================
+
+// ---- Query name: dim_products ----
+let
+    DataFolder = "C:\path\to\ecommerce-sales-kpi-dashboard\data\",
+    Source = Csv.Document(File.Contents(DataFolder & "dim_products.csv"),
+        [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.None]),
+    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+    Typed = Table.TransformColumnTypes(Promoted, {
+        {"Product Code", type text}, {"Product Name", type text},
+        {"Product Category", type text}, {"Selling Price (INR)", type number},
+        {"Unit Cost (INR)", type number}})
+in
+    Typed
+
+// ---- Query name: dim_customers ----
+let
+    DataFolder = "C:\path\to\ecommerce-sales-kpi-dashboard\data\",
+    Source = Csv.Document(File.Contents(DataFolder & "dim_customers.csv"),
+        [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.None]),
+    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+    Typed = Table.TransformColumnTypes(Promoted, {
+        {"Customer ID", type text}, {"Customer City", type text},
+        {"Customer Region", type text}, {"Acquisition Channel", type text},
+        {"Signup Date", type date}})
+in
+    Typed
+
+// ---- Query name: fact_orders ----
+let
+    DataFolder = "C:\path\to\ecommerce-sales-kpi-dashboard\data\",
+    Source = Csv.Document(File.Contents(DataFolder & "fact_orders.csv"),
+        [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.None]),
+    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+    Typed = Table.TransformColumnTypes(Promoted, {
+        {"Order ID", type text}, {"Order Date", type date},
+        {"Customer ID", type text}, {"Product Code", type text},
+        {"Sales Channel", type text}, {"Quantity", Int64.Type},
+        {"Unit Price (INR)", type number}, {"Discount %", type number},
+        {"Order Value (INR)", type number}, {"Payment Method", type text},
+        {"Order Status", type text}, {"Delivery Days", Int64.Type}})
+in
+    Typed
+
+// ---- Query name: Calendar (DAX, not M — Modeling > New table) ----
+// Calendar = CALENDAR ( DATE ( 2023, 1, 1 ), DATE ( 2025, 6, 30 ) )
+// Relate Calendar[Date] -> fact_orders[Order Date]; mark as date table.

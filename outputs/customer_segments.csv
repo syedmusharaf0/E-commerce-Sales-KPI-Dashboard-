@@ -1,0 +1,4 @@
+Customer Segment,Customers,Orders,Revenue (INR),Revenue Share %,Average Order Value (INR)
+One-time Buyer,2347,2347,5371343,6.0,2289.0
+Repeat Buyer (2-4 orders),2504,7058,16777580,18.8,2377.0
+Loyal Buyer (5+ orders),2871,28304,66938485,75.1,2365.0
